@@ -1,0 +1,33 @@
+@echo off
+rem Script para clonar um repositório, configurar git e enviar arquivos
+
+rem Passo 1 - Clonar o repositório para a unidade C:
+set /p repo_url=Digite o URL do repositório Git:
+cd C:\
+git clone %repo_url%
+
+rem Extrair o nome do repositório do URL
+for /f "tokens=*" %%i in ('basename "%repo_url%" .git') do set repo_name=%%i
+cd %repo_name%
+
+rem Passo 3 - Configurar Nome de Usuário e Email no Git
+set /p git_name=Digite o seu Nome de Usuário do Git:
+set /p git_email=Digite o seu Email do Git:
+
+git config user.name "%git_name%"
+git config user.email "%git_email%"
+
+rem Passo 4 - Criar Arquivo de Texto com o Hostname
+hostname > hostname.txt
+
+rem Passo 5 - Criar Arquivo de Texto com o IP
+for /f "tokens=14 delims= " %%a in ('ipconfig ^| findstr /c:"IPv4 Address"') do echo %%a > ip.txt
+
+rem Passo 6 - Fazer o Commit dos Arquivos
+git add hostname.txt ip.txt
+git commit -m "Adicionando arquivos hostname e IP"
+
+rem Passo 7 - Enviar para o Repositório no GitHub
+git push origin main
+
+pause
